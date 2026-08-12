@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# venvs
+.venv/
+venv/
+env/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# mypy / ruff caches
+.mypy_cache/
+.ruff_cache/
+
+# Docs build output (Sphinx + legacy MkDocs)
+site/
+.cache/
+docs/_build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Notebook download outputs (created when tutorials run live)
+docs/tutorials/data/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local artifacts (defense in depth — should never exist anyway)
+*.cookie
+cookie
+neid_cookie.txt
+neidadmincookie.txt
+.env
+.env.*
+
+# Internal IPAC policy docs — never publish
+Open Sourcing Software*.pdf
