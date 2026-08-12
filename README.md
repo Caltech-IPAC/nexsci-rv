@@ -1,31 +1,52 @@
-# public-repo-template
+# nexsci-rv
 
-[https://github.com/Caltech-IPAC/public-repo-template](https://github.com/Caltech-IPAC/public-repo-template) is a template for IPAC repos that are intended to be made public.
+A Python client for radial-velocity data archives hosted at [NExScI](https://nexsci.caltech.edu/).
 
-See [Open Sourcing Software](https://confluence.ipac.caltech.edu/spaces/IPAC/pages/709038101/Open+Sourcing+Software) for complete information and instructions for creating and using public repos at IPAC.
-Basic instructions are included below.
+[![Docs](https://github.com/Caltech-IPAC/nexsci-rv/actions/workflows/docs.yml/badge.svg)](https://caltech-ipac.github.io/nexsci-rv/)
 
-## Instructions for repo creators
+📖 **Documentation:** <https://caltech-ipac.github.io/nexsci-rv/>
 
-To create a repo using this template, complete the form at [https://github.com/organizations/Caltech-IPAC/repositories/new](https://github.com/organizations/Caltech-IPAC/repositories/new).
-In the **Configuration** section:
+**Status:** alpha (`0.1.0`). Awaiting first PyPI publish.
 
-- **Choose visibility**: choose "Private" for now.
-  ISG will make the repo public after it's been approved.
-- **Start with a template**: choose "Caltech-IPAC/public-repo-template".
-- **Include all branches**: choose "Off".
+## Supported archives
 
-## Instructions for repo users
+| Archive | Data levels | Auth |
+|---|---|---|
+| NEID    | L0, L1, L2, eng, solar L0/L1/L2/eng | cookie-based login (public access without) |
+| EXPRES  | solar L1, solar L2                  | public |
 
-Repos created from the template will contain a `main` branch with a couple of files that were copied from the template.
-Description of the files and what to do with them:
+## Install
 
-- `LICENSE`: A BSD 3-Clause license describing what others can and can't do with the contents of the repo.
-  This is required for legal purposes.
-  **Leave the file as-is.**
-- `README.md`: This file.
-  **Remove the original contents and add information about your repo.**
-  Be sure to include:
-  - a statement of the repo's purpose
-  - any information a new user or contributor needs to get started
-  - a point of contact for repo users and contributors to get support (e.g., email address or helpdesk link)
+```bash
+pip install nexsci-rv     # when released
+# or, from source:
+pip install -e ".[dev]"
+```
+
+## Quickstart
+
+```python
+from nexsci_rv import NEIDArchive, EXPRESArchive
+
+neid = NEIDArchive()
+table = neid.query_datetime("l2", ("2024-11-01", "2024-11-06"))
+print(table)
+
+expres = EXPRESArchive()
+sun = expres.query_datetime(
+    "solarl2",
+    ("2024-11-01", "2024-11-06"),
+    columns=["l2filename", "obsdate", "v", "e_v", "dvrms", "extsnr"],
+)
+print(sun)
+```
+
+See [`docs/quickstart.md`](docs/quickstart.md) and the example notebooks under [`docs/tutorials/`](docs/tutorials/).
+
+## Predecessor
+
+`nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see [`CHANGELOG.md`](CHANGELOG.md) for the rationale.
+
+## License
+
+BSD 3-Clause. See [`LICENSE`](LICENSE).

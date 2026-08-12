@@ -1,0 +1,147 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nexsci-rv"
+version = "0.1.0"
+description = "Python client for radial-velocity data archives hosted at NExScI (NEID, EXPRES)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "BJ Fulton", email = "bjfulton@ipac.caltech.edu" },
+]
+keywords = ["astronomy", "radial-velocity", "spectroscopy", "neid", "expres", "nexsci", "tap", "ivoa"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = [
+    "astropy>=6.0",
+    "requests>=2.31",
+    "platformdirs>=4.0",
+    "tqdm>=4.66",
+    "defusedxml>=0.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pytest-vcr>=1.0.2",
+    "vcrpy>=6.0",
+    # Pinned below 0.16: 0.16 began formatting Python code blocks inside
+    # Markdown, which would reformat the docs tree. Revisit deliberately.
+    "ruff>=0.15,<0.16",
+    "mypy>=1.10",
+    "types-requests",
+    "pre-commit>=3.7",
+    "pip-audit>=2.7",
+]
+docs = [
+    "sphinx>=7.2,<9",
+    "myst-nb>=1.1",
+    "sphinx-rtd-theme>=2.0",
+    "sphinx-copybutton>=0.5",
+    "linkify-it-py>=2.0",
+    "ipykernel>=6.29",
+    "matplotlib>=3.8",
+]
+notebooks = [
+    "jupyter>=1.0",
+    "matplotlib>=3.8",
+    "nbmake>=1.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/Caltech-IPAC/nexsci-rv"
+Documentation = "https://caltech-ipac.github.io/nexsci-rv/"
+Repository = "https://github.com/Caltech-IPAC/nexsci-rv"
+Issues = "https://github.com/Caltech-IPAC/nexsci-rv/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nexsci_rv"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/nexsci_rv",
+    "tests",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "pyproject.toml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "SIM",           # simplify
+    "RUF",           # ruff-specific
+    "S",             # bandit (security)
+]
+ignore = [
+    "E501",          # line length handled by formatter
+    "S101",          # asserts in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S311"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+files = ["src/nexsci_rv"]
+
+[[tool.mypy.overrides]]
+module = ["astropy.*", "vcr.*", "tqdm.*", "defusedxml.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "network: integration tests that hit the live NEID server",
+    "slow: tests slower than a few seconds",
+]
+
+[tool.coverage.run]
+source = ["src/nexsci_rv"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",
+]
+fail_under = 85
