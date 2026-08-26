@@ -50,32 +50,46 @@ def test_query_datetime_builds_oracle_to_date(neid):
     assert "neidl2" in sql
     assert "to_date('2024-11-01 00:00:00','yyyy-mm-dd HH24:MI:SS')" in sql
     assert "to_date('2024-11-06 00:00:00','yyyy-mm-dd HH24:MI:SS')" in sql
-    assert "date_obs >=" in sql
-    assert "date_obs <=" in sql
+    assert "obsdate >=" in sql
+    assert "obsdate <=" in sql
 
 
 def test_query_datetime_open_ended_start(neid):
     neid.query_datetime("l2", (None, "2024-11-06"))
     sql = _last_adql(neid)
-    assert "date_obs <=" in sql
-    assert "date_obs >=" not in sql
+    assert "obsdate <=" in sql
+    assert "obsdate >=" not in sql
 
 
 def test_query_datetime_with_columns_validates(neid):
     neid.query_datetime(
         "l2",
         ("2024-11-01", "2024-11-06"),
-        columns=["l2filename", "date_obs", "exptime"],
+        columns=["l2filename", "obsdate", "exptime"],
     )
     sql = _last_adql(neid)
     assert "l2filename" in sql
-    assert "date_obs" in sql
+    assert "obsdate" in sql
     assert "exptime" in sql
 
 
 def test_query_datetime_rejects_unknown_column(neid):
     with pytest.raises(UnknownColumn):
         neid.query_datetime("l2", ("2024-11-01", "2024-11-06"), columns=["no_such_col"])
+
+
+def test_download_url_honors_server_override(tmp_cookie_root):
+    arc = NEIDArchive(
+        server="https://proxy.example.org",
+        conf=Conf(cookie_root=tmp_cookie_root),
+    )
+    url = arc._build_download_url("l2", "/p/x.fits")
+    assert url.startswith("https://proxy.example.org/get_file.php?filehand=/p/x.fits")
+
+
+def test_download_url_defaults_to_production(neid):
+    url = neid._build_download_url("l2", "/p/x.fits")
+    assert url.startswith("https://neid.ipac.caltech.edu/get_file.php")
 
 
 def test_query_position_builds_circle_predicate(neid):
@@ -255,8 +269,8 @@ def test_query_datetime_start_only(neid):
     """Asserts query_datetime with only start date omits the end clause."""
     neid.query_datetime("l2", ("2024-11-01", None))
     sql = _last_adql(neid)
-    assert "date_obs >=" in sql
-    assert "date_obs <=" not in sql
+    assert "obsdate >=" in sql
+    assert "obsdate <=" not in sql
 
 
 # ---------------------------------------------------------------------------

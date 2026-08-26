@@ -30,7 +30,7 @@ observation date.
 table = neid.query_datetime(
     "l2",
     ("2024-11-01", "2024-11-06"),
-    columns=["date_obs", "object", "ccfrvmod", "ccfnoise", "exptime"],
+    columns=["obsdate", "object", "ccfrvmod", "ccfnoise", "exptime"],
     maxrec=5,
 )
 print(table)
@@ -55,7 +55,7 @@ already use elsewhere in astropy. You can sort it, filter it, write it to disk,
 or feed it straight into a plot:
 
 ```text
-       date_obs         object   ccfrvmod  ccfnoise  exptime
+       obsdate         object   ccfrvmod  ccfnoise  exptime
                                     m / s     m / s      s
 ----------------------- -------- --------- --------- -------
 2024-11-01T03:12:44.521 HD 3651  -33012.4       1.8   120.0
@@ -65,8 +65,7 @@ or feed it straight into a plot:
 
 Here's what those columns are telling you:
 
-- {term}`date_obs / obsdate` — when the exposure was taken. (NEID calls this
-  `date_obs`; EXPRES calls it `obsdate`.)
+- {term}`obsdate` — when the exposure was taken.
 - {term}`object` — the free-text target name the observer typed in. Useful as a
   sanity check, but don't rely on it for exact matching.
 - {term}`ccfrvmod` — the headline radial velocity for that observation, in m/s.

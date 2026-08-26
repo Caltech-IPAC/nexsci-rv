@@ -37,7 +37,7 @@ So if you select columns explicitly, keep the relevant pair:
 ```python
 tbl = neid.query_datetime(
     "l2", ("2024-11-01", "2024-11-02"),
-    columns=["l2filename", "l2filepath", "date_obs", "object"],
+    columns=["l2filename", "l2filepath", "obsdate", "object"],
 )
 paths = neid.download(tbl, outdir="data/")
 ```

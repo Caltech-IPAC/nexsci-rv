@@ -80,8 +80,8 @@ only does one search. Accepted keys (besides `data_level`):
 
 ```python
 tbl = neid.query_adql(
-    "SELECT TOP 100 l2filename, date_obs FROM neidl2 "
-    "WHERE date_obs > to_date('2024-11-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')"
+    "SELECT TOP 100 l2filename, obsdate FROM neidl2 "
+    "WHERE obsdate > to_date('2024-11-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')"
 )
 ```
 
@@ -96,13 +96,13 @@ Every query method takes `columns=` and `maxrec=`:
 tbl = neid.query_datetime(
     "l2",
     ("2024-11-01", "2024-11-06"),
-    columns=["l2filename", "date_obs", "object", "exptime"],
+    columns=["l2filename", "obsdate", "object", "exptime"],
     maxrec=500,
 )
 ```
 
 Those columns are: `l2filename` the FITS file's name (keep it if you plan to
-{term}`download`), {term}`date_obs / obsdate` the observation time stamp,
+{term}`download`), {term}`obsdate` the observation time stamp,
 {term}`object` the free-text target name, and {term}`exptime` the exposure time
 in seconds. For a tour of the columns you'll meet most — RV values, quality
 metrics, download keys — see {doc}`concepts/results-columns`.
@@ -163,8 +163,8 @@ asynchronously:
 
 ```python
 job = neid.submit_async(
-    "SELECT date_obs, exptime, object FROM neidl2 "
-    "WHERE date_obs BETWEEN "
+    "SELECT obsdate, exptime, object FROM neidl2 "
+    "WHERE obsdate BETWEEN "
     "to_date('2023-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS') AND "
     "to_date('2024-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS')"
 )
@@ -188,7 +188,7 @@ tbl = expres.query_datetime(
 ```
 
 - `data_level` is `"solarl1"` or `"solarl2"`.
-- The datetime column is `obsdate`, not `date_obs`.
+- The datetime column is `obsdate`, the same as NEID.
 - The RV columns are {term}`v / e_v (EXPRES)` — `v` is the radial velocity and
   `e_v` its uncertainty (the EXPRES equivalents of NEID's `ccfrvmod`/`ccfnoise`).
 - `query_position`, `query_object`, and `query_qobject` are not available for

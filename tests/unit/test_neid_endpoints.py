@@ -28,6 +28,11 @@ def test_solareng_url_has_both_flags():
     assert "&solar" in url
 
 
+def test_server_override_changes_host():
+    url = build_download_url("l1", "/p/f.fits", server="https://proxy.example.org/")
+    assert url == "https://proxy.example.org/get_file.php?filehand=/p/f.fits&json"
+
+
 def test_json_suffix_is_last():
     """The legacy contract ends with '&json'."""
     url = build_download_url("l2", "/p/x.fits")
