@@ -120,14 +120,14 @@ given query may not return every column listed.
 
 For the common levels, the columns you will actually reach for:
 
-**`l2` (RV products):** `l2filename`, `l2filepath`, `date_obs`, `object`,
+**`l2` (RV products):** `l2filename`, `l2filepath`, `obsdate`, `object`,
 `exptime`, `seeing`, `airmass`, `ccfrvmod`, `ccfrvsum`, `ccfnoise`,
 `ccfjdsum`, `program`, `piname`.
 
-**`l1` (extracted spectra):** `l1filename`, `l1filepath`, `date_obs`,
+**`l1` (extracted spectra):** `l1filename`, `l1filepath`, `obsdate`,
 `object`, `exptime`, `seeing`, `airmass`, `swversion`.
 
-**`l0` (raw frames):** `l0filename`, `l0filepath`, `date_obs`, `object`,
+**`l0` (raw frames):** `l0filename`, `l0filepath`, `obsdate`, `object`,
 `exptime`, `obsmode`, `obstype`.
 
 See {doc}`../concepts/results-columns` for a grouped, plain-language tour of

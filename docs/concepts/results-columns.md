@@ -12,8 +12,8 @@ descriptions — call {term}`describe_table`, e.g. `describe_table('neidl2')` or
   or `'Sun'`). Good for a sanity check, not for exact matching.
 - {term}`qobject` — the normalized catalog ID (typically Gaia DR2); the clean
   exact-match key. (EXPRES solar: the constant `'Sun'`, not a real ID.)
-- {term}`date_obs / obsdate` — the observation time stamp (`date_obs` on NEID,
-  `obsdate` on EXPRES); the column behind {term}`query_datetime`.
+- {term}`obsdate` — the observation time stamp on both archives; the column
+  behind {term}`query_datetime`.
 - `mjd`, `obsjd`, {term}`ccfjdsum` — precise numeric times
   ({term}`Julian Date (JD / MJD)`) for building an RV time series and orbital
   fits.
@@ -59,7 +59,7 @@ NEID workflow to EXPRES, translate:
 | --- | --- | --- |
 | Radial velocity | `ccfrvmod` | `v` |
 | RV uncertainty | `ccfnoise` | `e_v` |
-| Observation time | `date_obs` | `obsdate` |
+| Observation time | `obsdate` | `obsdate` |
 
 See {doc}`radial-velocities` for what these RV columns mean, and
 {doc}`downloading-and-proprietary` for using the download keys.

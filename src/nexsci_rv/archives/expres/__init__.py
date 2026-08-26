@@ -45,7 +45,8 @@ class EXPRESArchive(BaseArchive):
     _datalevel_to_table: ClassVar[dict[str, str]] = DATALEVEL_TO_TABLE
     _table_columns: ClassVar[dict[str, tuple[str, ...]]] = TABLE_COLUMNS
 
-    # EXPRES uses 'obsdate' for the observation timestamp, not 'date_obs'.
+    # EXPRES solar tables carry 'obsdate' for the observation timestamp
+    # (as do the NEID tables; the BaseArchive 'date_obs' default fits neither).
     _datelike_column: ClassVar[str] = "obsdate"
     # No object-name column at all in EXPRES solar — object is always 'Sun'.
     _qobject_column: ClassVar[str] = "object"
@@ -154,7 +155,7 @@ class EXPRESArchive(BaseArchive):
     # ---- per-archive download wiring ---------------------------------------
 
     def _build_download_url(self, data_level: str, filepath: str) -> str:
-        return build_download_url(data_level, filepath)
+        return build_download_url(data_level, filepath, server=self._server)
 
     def _filename_column(self, data_level: str) -> str:
         # solarl1 → l1filename, solarl2 → l2filename

@@ -43,7 +43,7 @@ Doppler shift. The headline solar L2 columns:
 | {term}`v / e_v (EXPRES)` (`e_v`) | Formal uncertainty on `v`, m/s. |
 | {term}`dvrms (EXPRES)` | Photon-limited RV precision predicted for the exposure, m/s. |
 | {term}`extsnr (EXPRES)` | Extracted spectrum signal-to-noise; a natural quality cut. |
-| {term}`date_obs / obsdate` (`obsdate`) | UTC observation time stamp; what date queries filter on. |
+| {term}`obsdate` | UTC observation time stamp; what date queries filter on. |
 | `mjd` | The same time as a {term}`Julian Date (JD / MJD)` (Modified JD), for time series. |
 | {term}`filename / filepath / filehand` (`l2filename`) | The FITS file's name; {term}`download` needs it. |
 

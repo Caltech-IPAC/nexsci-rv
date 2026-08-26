@@ -175,6 +175,15 @@ def test_query_criteria_allows_datetime_and_program(expres):
 # ---- download wiring -------------------------------------------------------
 
 
+def test_download_url_honors_server_override(tmp_cookie_root):
+    arc = EXPRESArchive(
+        server="https://proxy.example.org",
+        conf=Conf(cookie_root=tmp_cookie_root),
+    )
+    url = arc._build_download_url("solarl2", "/p/x.fits")
+    assert url.startswith("https://proxy.example.org/get_file.php?filehand=/p/x.fits")
+
+
 def test_download_url_includes_express_solar_flags():
     url = build_download_url("solarl2", "/p/expresL2_20241101.fits")
     assert "express" in url

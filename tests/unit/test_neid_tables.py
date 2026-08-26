@@ -14,7 +14,7 @@ def test_every_table_has_columns():
     for table, cols in TABLE_COLUMNS.items():
         assert cols, f"table {table} has no columns"
         assert "object" in cols, f"table {table} missing 'object'"
-        assert "date_obs" in cols, f"table {table} missing 'date_obs'"
+        assert "obsdate" in cols, f"table {table} missing 'obsdate'"
 
 
 def test_l1_l2_have_filename_and_filepath():

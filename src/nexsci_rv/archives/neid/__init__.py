@@ -38,8 +38,12 @@ class NEIDArchive(BaseArchive):
     _datalevel_to_table: ClassVar[dict[str, str]] = DATALEVEL_TO_TABLE
     _table_columns: ClassVar[dict[str, tuple[str, ...]]] = TABLE_COLUMNS
 
+    # All NEID tables carry 'obsdate' (verified against production TAP_SCHEMA);
+    # no NEID table has a 'date_obs' column.
+    _datelike_column: ClassVar[str] = "obsdate"
+
     def _build_download_url(self, data_level: str, filepath: str) -> str:
-        return build_download_url(data_level, filepath)
+        return build_download_url(data_level, filepath, server=self._server)
 
 
 __all__ = ["NEIDArchive"]

@@ -190,12 +190,11 @@ exptime
   A common quality/selection filter (e.g. drop very short test exposures with
   `where='exptime > 60'`) and a basic descriptor of each row.
 
-date_obs / obsdate
-  The observation time stamp. NEID uses the column `date_obs`; EXPRES uses
-  `obsdate`. Both are what date-range queries filter on. This is the column
-  behind {term}`query_datetime`; the package automatically routes to the right
-  one per archive, so you never type the column name yourself for date queries,
-  though you do see it in results.
+obsdate
+  The observation time stamp; what date-range queries filter on. Both NEID and
+  EXPRES use the column `obsdate`. This is the column behind
+  {term}`query_datetime`, so you never type the column name yourself for date
+  queries, though you do see it in results.
 
 Julian Date (JD / MJD)
   Standard astronomical time formats. JD counts days since 4713 BC; MJD = JD -

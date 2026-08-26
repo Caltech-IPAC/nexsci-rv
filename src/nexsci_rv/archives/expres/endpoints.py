@@ -11,16 +11,19 @@ DEFAULT_SERVER = "https://neid.ipac.caltech.edu/"
 # EXPRES solar data is fully public; no login endpoint needed.
 LOGIN_PATH: str | None = None
 
-DOWNLOAD_BASE_URL = "https://neid.ipac.caltech.edu/get_file.php"
+_DOWNLOAD_PATH = "get_file.php"
+DOWNLOAD_BASE_URL = f"{DEFAULT_SERVER}{_DOWNLOAD_PATH}"
 
 
-def build_download_url(data_level: str, filepath: str) -> str:
+def build_download_url(data_level: str, filepath: str, *, server: str = DEFAULT_SERVER) -> str:
     """Return the GET URL for one EXPRES solar FITS file.
 
     ``filepath`` is the value of the ``l<n>filehand`` (or ``l<n>filepath``)
     column from a query result. The ``&express&solar`` flags mirror the
     NEID convention for distinguishing solar/eng/express data through the
-    same ``get_file.php`` endpoint.
+    same ``get_file.php`` endpoint. ``server`` must be the same base the
+    queries run against so an ``EXPRESArchive(server=...)`` override applies
+    to downloads too.
 
     Note:
         This URL form has not been verified against the live server in v1
@@ -28,7 +31,8 @@ def build_download_url(data_level: str, filepath: str) -> str:
         requires authentication for some EXPRES products). Adjust here if
         the integration tests reveal a different URL shape.
     """
-    return f"{DOWNLOAD_BASE_URL}?filehand={filepath}&express&solar&json"
+    base = server.rstrip("/") + "/" + _DOWNLOAD_PATH
+    return f"{base}?filehand={filepath}&express&solar&json"
 
 
 __all__ = ["DEFAULT_SERVER", "DOWNLOAD_BASE_URL", "LOGIN_PATH", "build_download_url"]

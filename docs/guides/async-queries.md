@@ -25,8 +25,8 @@ from nexsci_rv import NEIDArchive
 neid = NEIDArchive()
 
 adql = (
-    "SELECT date_obs, exptime, object FROM neidl2 "
-    "WHERE date_obs BETWEEN "
+    "SELECT obsdate, exptime, object FROM neidl2 "
+    "WHERE obsdate BETWEEN "
     "to_date('2020-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS') AND "
     "to_date('2024-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS')"
 )

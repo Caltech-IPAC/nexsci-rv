@@ -25,7 +25,7 @@ _COMMON_COLUMNS: tuple[str, ...] = (
     "object",
     "qra",
     "qdec",
-    "date_obs",
+    "obsdate",
     "exptime",
     "obsmode",
     "obstype",
