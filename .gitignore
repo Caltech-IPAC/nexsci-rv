@@ -57,3 +57,12 @@ neidadmincookie.txt
 
 # Internal IPAC policy docs — never publish
 Open Sourcing Software*.pdf
+
+# IPAC open-sourcing paperwork — contains signatures/personal info, never publish
+SoftwareDisclosure*.pdf
+IPAC-Public-Repository-Request*.pdf
+nexsci-rv_OTTCP_disclosure_description.*
+OTTCP_submission_*/
+
+# Local tooling binaries that must never be committed
+dcp-cert-util

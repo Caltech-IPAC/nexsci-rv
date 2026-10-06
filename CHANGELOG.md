@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Documentation migrated from MkDocs Material to Sphinx (MyST) on Read the Docs,
+- Documentation migrated from MkDocs Material to Sphinx (MyST) on GitHub Pages,
   and rewritten for astronomers new to RV archives: added a "Understanding the
   data" concepts layer and a glossary, reframed the landing, quickstart, archive,
   and API pages, rewrote the tutorials, and added a guided "first query" page.

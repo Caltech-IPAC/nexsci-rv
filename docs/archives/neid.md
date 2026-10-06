@@ -160,8 +160,8 @@ to authenticate to reach observations still inside their
 which only the observing team can access their files.
 
 ```python
-neid.login()                                  # interactive getpass prompt
-neid.login(username="me", password="hunter2") # explicit (avoid in checked-in code)
+neid.login()                                 # interactive getpass prompt
+neid.login(username="myuser", password=...)  # explicit (avoid in checked-in code)
 ```
 
 Credentials are resolved in this order:

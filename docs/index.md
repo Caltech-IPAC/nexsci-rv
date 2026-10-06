@@ -47,6 +47,16 @@ shift based on user feedback before `1.0.0`. Issues and design feedback are
 welcome at
 [github.com/Caltech-IPAC/nexsci-rv/issues](https://github.com/Caltech-IPAC/nexsci-rv/issues).
 
+## Getting help
+
+- **Questions about the data or archive access** — email the NEID/NExScI archive
+  helpdesk at <neid-help@ipac.caltech.edu>.
+- **Bugs or feature requests in this client** — open an issue at
+  [github.com/Caltech-IPAC/nexsci-rv/issues](https://github.com/Caltech-IPAC/nexsci-rv/issues).
+
+Never include a password or session cookie in an issue or an email. See
+{doc}`guides/authentication` for how credentials are handled.
+
 ## Next steps
 
 - {doc}`quickstart` — the search-and-download patterns most users hit first.
