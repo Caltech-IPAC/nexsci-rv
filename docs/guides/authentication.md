@@ -135,6 +135,6 @@ unsafe download path, anything that could expose another user's data — please
 report it rather than filing it as an ordinary public bug. Use GitHub's private
 vulnerability reporting on the
 [Caltech-IPAC/nexsci-rv](https://github.com/Caltech-IPAC/nexsci-rv/security/advisories)
-repository, or contact the maintainers directly. For non-sensitive bugs and
+repository, or email <neid-help@ipac.caltech.edu>. For non-sensitive bugs and
 feature requests, the public
 [issue tracker](https://github.com/Caltech-IPAC/nexsci-rv/issues) is the right place.

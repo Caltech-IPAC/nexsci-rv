@@ -47,6 +47,17 @@ See [`docs/quickstart.md`](docs/quickstart.md) and the example notebooks under [
 
 `nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see [`CHANGELOG.md`](CHANGELOG.md) for the rationale.
 
+## Support
+
+Questions, bug reports, and feature requests are welcome:
+
+- **Email:** <neid-help@ipac.caltech.edu> — the NEID/NExScI archive helpdesk, and the
+  best route for questions about the data itself or about archive access.
+- **GitHub Issues:** <https://github.com/Caltech-IPAC/nexsci-rv/issues> — for bugs in
+  this client library.
+
+Please do not include passwords or session cookies in an issue or an email.
+
 ## License
 
 BSD 3-Clause. See [`LICENSE`](LICENSE).
