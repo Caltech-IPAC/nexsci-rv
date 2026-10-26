@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "nexsci-rv"
 version = "0.1.0"
-description = "Python client for radial-velocity data archives hosted at NExScI (NEID, EXPRES)."
+description = "Python client for the radial-velocity data archives hosted at NExScI."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"

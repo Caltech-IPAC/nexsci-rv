@@ -1,10 +1,20 @@
 # nexsci-rv
 
-**NEID** is a high-precision radial-velocity (RV) spectrograph on the WIYN 3.5-m
-telescope at Kitt Peak, and **EXPRES** is a spectrograph on the Lowell Discovery
-Telescope (this client exposes its solar-feed data). Their data are archived at
-[NExScI](https://nexsci.caltech.edu/). `nexsci-rv` is a Python client for
-searching those archives and downloading their data products.
+`nexsci-rv` is a Python client for the radial-velocity (RV) data archives
+hosted at [NExScI](https://nexsci.caltech.edu/). It gives every archive the
+same interface: search observations by date, position, target, or program, get
+the results back as an `astropy` table, and download the data products you
+need.
+
+## Supported archives
+
+| Archive | What it holds | Class |
+|---|---|---|
+| {doc}`NEID <archives/neid>` | NEID spectra and RVs at all data levels (L0, L1, L2, engineering), plus the solar feed | `NEIDArchive` |
+| {doc}`EXPRES <archives/expres>` | EXPRES solar-feed spectra and RVs (solar L1 and L2) | `EXPRESArchive` |
+
+Each archive is a class with the same query and download methods, so what you
+learn on one carries over to the others.
 
 ## A quick example
 
@@ -20,8 +30,8 @@ print(table)
 
 ## What you can do
 
-Search the archives the way you actually think about your data, then pull down
-the files you need:
+Search any supported archive the way you actually think about your data, then
+pull down the files you need:
 
 - **Find spectra** by observation date, sky position, target name, Gaia ID,
   observing program, or PI.
@@ -37,8 +47,9 @@ results with the tools you already use.
 
 `nexsci-rv` is a clean-room successor to
 [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible:
-existing pyNEID users rewrite their imports and call sites, and it adds support
-for the EXPRES solar archive.
+existing pyNEID users rewrite their imports and call sites. Where pyNEID served
+NEID only, `nexsci-rv` is built to cover multiple archives through one shared
+interface.
 
 ## Project status
 
@@ -61,8 +72,8 @@ Never include a password or session cookie in an issue or an email. See
 
 - {doc}`quickstart` — the search-and-download patterns most users hit first.
 - {doc}`tutorials/01_neid_query_l2` — a worked NEID Level-2 query, end to end.
-- {doc}`archives/neid` — what NEID offers, including its data levels.
-- {doc}`archives/expres` — the EXPRES solar archive.
+- {doc}`concepts/instruments` — the archives this client supports, and how
+  they fit one interface.
 
 ```{toctree}
 :hidden:
