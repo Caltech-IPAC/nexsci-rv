@@ -6,7 +6,11 @@ A Python client for radial-velocity data archives hosted at [NExScI](https://nex
 
 📖 **Documentation:** <https://caltech-ipac.github.io/nexsci-rv/>
 
-**Status:** alpha (`0.1.0`). Awaiting first PyPI publish.
+**Status:** alpha (`0.1.0`). The public API may still change before `1.0.0`.
+
+`nexsci-rv` gives every supported archive the same interface: search
+observations by date, position, target, or program, get the results back as
+an `astropy` table, and download the data products you need.
 
 ## Supported archives
 
@@ -18,7 +22,7 @@ A Python client for radial-velocity data archives hosted at [NExScI](https://nex
 ## Install
 
 ```bash
-pip install nexsci-rv     # when released
+pip install nexsci-rv
 # or, from source:
 pip install -e ".[dev]"
 ```
@@ -41,11 +45,11 @@ sun = expres.query_datetime(
 print(sun)
 ```
 
-See [`docs/quickstart.md`](docs/quickstart.md) and the example notebooks under [`docs/tutorials/`](docs/tutorials/).
+See the [quickstart](https://caltech-ipac.github.io/nexsci-rv/quickstart.html) and the [tutorials](https://caltech-ipac.github.io/nexsci-rv/tutorials/01_neid_query_l2.html) in the documentation.
 
 ## Predecessor
 
-`nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see [`CHANGELOG.md`](CHANGELOG.md) for the rationale.
+`nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see the [changelog](https://github.com/Caltech-IPAC/nexsci-rv/blob/main/CHANGELOG.md) for the rationale.
 
 ## Support
 
@@ -60,4 +64,4 @@ Please do not include passwords or session cookies in an issue or an email.
 
 ## License
 
-BSD 3-Clause. See [`LICENSE`](LICENSE).
+BSD 3-Clause. See [`LICENSE`](https://github.com/Caltech-IPAC/nexsci-rv/blob/main/LICENSE).
