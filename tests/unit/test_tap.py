@@ -99,13 +99,54 @@ def test_unknown_format_rejected():
 
 def test_maxrec_passed_in_form_data():
     client, session = _make_client(IPAC_TABLE)
-    client.query("SELECT * FROM neidl2", maxrec=100)
+    client.query("SELECT * FROM neidl2", output_format="ipac", maxrec=100)
     sent_form = session.post.call_args.kwargs["data"]
     assert sent_form["maxrec"] == "100"
 
 
 def test_query_uses_sync_endpoint():
     client, session = _make_client(IPAC_TABLE)
-    client.query("SELECT * FROM neidl2")
+    client.query("SELECT * FROM neidl2", output_format="ipac")
     sent_url = session.post.call_args.args[0]
     assert sent_url.endswith("/sync")
+
+
+VOTABLE_TABLE = """\
+<?xml version="1.0"?>
+<VOTABLE version="1.3" xmlns="http://www.ivoa.net/xml/VOTable/v1.3">
+  <RESOURCE type="results">
+    <INFO name="QUERY_STATUS" value="OK"/>
+    <TABLE>
+      <FIELD name="col1" datatype="int"/>
+      <DATA><TABLEDATA><TR><TD>1</TD></TR><TR><TD>2</TD></TR></TABLEDATA></DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>
+"""
+
+
+def test_default_output_format_is_votable():
+    client, session = _make_client(VOTABLE_TABLE)
+    table = client.query("SELECT * FROM neidl2")
+    assert session.post.call_args.kwargs["data"]["format"] == "votable"
+    assert list(table["col1"]) == [1, 2]
+
+
+def test_http_error_raises_tap_server_error_with_server_message():
+    """A non-2xx response surfaces the server's explanation, not a bare HTTPError."""
+    body = (
+        "Column 119 [nightdate], row 0: Formatted value [2024-11-01 00:00:00](14s) "
+        "-> 20 characters,  overflows column width [14 char]."
+    )
+    client, _ = _make_client(body, status=400)
+    with pytest.raises(TapServerError, match=r"HTTP 400.*overflows column width"):
+        client.query("SELECT * FROM neidl2", output_format="ipac")
+
+
+def test_http_error_with_votable_error_body_uses_query_status_message():
+    body = """<?xml version="1.0"?>
+<VOTABLE><RESOURCE><INFO name="QUERY_STATUS" value="ERROR">ORA-00904: invalid identifier</INFO></RESOURCE></VOTABLE>
+"""
+    client, _ = _make_client(body, status=400)
+    with pytest.raises(TapServerError, match=r"\(HTTP 400\): ORA-00904: invalid identifier$"):
+        client.query("SELECT * FROM neidl2")

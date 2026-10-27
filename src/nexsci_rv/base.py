@@ -32,13 +32,16 @@ from .config import Conf
 from .config import conf as default_conf
 from .download import RowToUrl, parallel_download
 from .exceptions import NotApplicable, NotAuthenticated, QueryError, UnknownDataLevel
-from .tap import OutputFormat, TapClient
+from .tap import OutputFormat, TapClient, raise_for_tap_status
 
 if TYPE_CHECKING:
     from ._types import DateRange
 
 
 logger = logging.getLogger("nexsci_rv.base")
+
+#: Key in ``Table.meta`` under which query results record their data level.
+DATA_LEVEL_META_KEY = "nexsci_rv_data_level"
 
 
 class BaseArchive(ABC):
@@ -118,7 +121,7 @@ class BaseArchive(ABC):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Return rows whose observation datetime is in ``date_range``.
 
@@ -135,7 +138,7 @@ class BaseArchive(ABC):
         full_where = " AND ".join(clauses) if clauses else None
 
         sql = adql.build_select(validated_cols, table, where=full_where)
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_position(
         self,
@@ -146,18 +149,18 @@ class BaseArchive(ABC):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Return rows whose (ra, dec) lies within ``radius`` of ``coord``."""
         table = self._table_for(data_level)
         validated_cols = self._validate_columns(table, columns)
 
-        clauses = [adql.format_circle_predicate(coord, radius)]
+        clauses = [self._circle_predicate(coord, radius)]
         if where:
             clauses.append(f"({where})")
 
         sql = adql.build_select(validated_cols, table, where=" AND ".join(clauses))
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_object(
         self,
@@ -181,7 +184,7 @@ class BaseArchive(ABC):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Search by the ``QOBJECT`` column (typically a Gaia DR2 ID).
 
@@ -194,7 +197,7 @@ class BaseArchive(ABC):
         if where:
             clauses.append(f"({where})")
         sql = adql.build_select(validated_cols, table, where=" AND ".join(clauses))
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_program(
         self,
@@ -204,7 +207,7 @@ class BaseArchive(ABC):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Search by the ``PROGRAM`` column (exact match)."""
         table = self._table_for(data_level)
@@ -213,7 +216,7 @@ class BaseArchive(ABC):
         if where:
             clauses.append(f"({where})")
         sql = adql.build_select(validated_cols, table, where=" AND ".join(clauses))
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_pi(
         self,
@@ -223,7 +226,7 @@ class BaseArchive(ABC):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Search by the ``PINAME`` column (exact match)."""
         table = self._table_for(data_level)
@@ -232,7 +235,7 @@ class BaseArchive(ABC):
         if where:
             clauses.append(f"({where})")
         sql = adql.build_select(validated_cols, table, where=" AND ".join(clauses))
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_criteria(
         self,
@@ -240,7 +243,7 @@ class BaseArchive(ABC):
         *,
         columns: list[str] | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Combine multiple constraints in a single ADQL round-trip.
 
@@ -268,7 +271,7 @@ class BaseArchive(ABC):
 
         if "position" in criteria:
             coord, radius = criteria["position"]
-            clauses.append(adql.format_circle_predicate(coord, radius))
+            clauses.append(self._circle_predicate(coord, radius))
 
         if "object" in criteria:
             obj = criteria["object"]
@@ -277,7 +280,7 @@ class BaseArchive(ABC):
             except Exception as exc:
                 raise QueryError(f"Failed to resolve object {obj!r}: {exc}") from exc
             radius = criteria.get("object_radius", 30 * u.arcsec)
-            clauses.append(adql.format_circle_predicate(coord, radius))
+            clauses.append(self._circle_predicate(coord, radius))
 
         if "qobject" in criteria:
             clauses.append(
@@ -299,14 +302,14 @@ class BaseArchive(ABC):
 
         full_where = " AND ".join(clauses) if clauses else None
         sql = adql.build_select(validated_cols, table, where=full_where)
-        return self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        return self._run_query(sql, data_level, output_format=output_format, maxrec=maxrec)
 
     def query_adql(
         self,
         adql_query: str,
         *,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         """Raw ADQL escape hatch — caller is responsible for the query string."""
         return self._tap.query(adql_query, output_format=output_format, maxrec=maxrec)
@@ -327,7 +330,7 @@ class BaseArchive(ABC):
             "FROM TAP_SCHEMA.columns "
             f"WHERE table_name = {literal}"
         )
-        return self._tap.query(sql, output_format="ipac")
+        return self._tap.query(sql, output_format="votable")
 
     # ---- async -------------------------------------------------------------
 
@@ -354,7 +357,7 @@ class BaseArchive(ABC):
             async_url, data=data, timeout=self._conf.timeout, allow_redirects=False
         )
         if response.status_code not in (200, 303):
-            response.raise_for_status()
+            raise_for_tap_status(response, context="Async job submit")
         status_url = response.headers.get("Location") or response.url
         return AsyncJob(
             status_url,
@@ -380,13 +383,17 @@ class BaseArchive(ABC):
         Returns the list of successfully downloaded paths. Partial failures
         raise :class:`DownloadError` after best-effort completion.
 
-        ``data_level`` is required if it cannot be inferred from the table
-        columns (e.g. a custom ADQL query that selected only the filename
-        column). Subclasses that route downloads through level-specific URLs
-        use this to pick the right URL template.
+        Tables returned by the ``query_*`` methods remember their data level,
+        so ``data_level`` is normally unnecessary. It is required for tables
+        from :meth:`query_adql` or built by hand, unless exactly one data
+        level matches the table's filename columns.
         """
         outdir = Path(outdir)
-        level = data_level or self._infer_data_level(result_table)
+        level = (
+            data_level
+            or result_table.meta.get(DATA_LEVEL_META_KEY)
+            or self._infer_data_level(result_table)
+        )
         url_builder = self._row_to_url_factory(level)
         return parallel_download(
             result_table,
@@ -438,6 +445,24 @@ class BaseArchive(ABC):
             return [adql.validate_identifier(c, kind="column") for c in columns]
         return adql.validate_columns(columns, known)
 
+    def _circle_predicate(self, coord: adql.CoordInput, radius: adql.RadiusInput) -> str:
+        return adql.format_circle_predicate(
+            coord, radius, ra_column=self._ra_column, dec_column=self._dec_column
+        )
+
+    def _run_query(
+        self,
+        sql: str,
+        data_level: str,
+        *,
+        output_format: OutputFormat,
+        maxrec: int | None,
+    ) -> Table:
+        """Execute ``sql`` and record ``data_level`` on the result for :meth:`download`."""
+        result = self._tap.query(sql, output_format=output_format, maxrec=maxrec)
+        result.meta[DATA_LEVEL_META_KEY] = data_level
+        return result
+
     def _datetime_clauses(self, start: object, end: object) -> list[str]:
         clauses: list[str] = []
         col = self._datelike_column
@@ -448,13 +473,20 @@ class BaseArchive(ABC):
         return clauses
 
     def _infer_data_level(self, table: Table) -> str:
-        """Look at the columns in the result table to guess the data level."""
+        """Infer the data level from filename columns, only when unambiguous."""
         cols = {c.lower() for c in table.colnames}
-        # Prefer the most-specific match.
-        for level in self.data_levels:
-            if self._filename_column(level).lower() in cols:
-                return level
-        raise QueryError("Cannot infer data_level from result columns; pass data_level= explicitly")
+        candidates = [
+            level for level in self.data_levels if self._filename_column(level).lower() in cols
+        ]
+        if len(candidates) == 1:
+            return candidates[0]
+        if not candidates:
+            raise QueryError(
+                "Cannot infer data_level from result columns; pass data_level= explicitly"
+            )
+        raise QueryError(
+            f"Result columns match several data levels {candidates}; pass data_level= explicitly"
+        )
 
     def _row_to_url_factory(self, data_level: str) -> RowToUrl:
         """Build the row → (filename, url) callable for ``parallel_download``."""

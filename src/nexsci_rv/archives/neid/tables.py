@@ -32,8 +32,8 @@ _COMMON_COLUMNS: tuple[str, ...] = (
     "program",
     "piname",
     "datalvl",
-    "ra",
-    "dec",
+    "qrad",
+    "qdecd",
 )
 
 # Level-specific extra columns.
@@ -62,34 +62,42 @@ _L2_EXTRA: tuple[str, ...] = (
     "ccfrvsum",
     "swversion",
 )
-_ENG_EXTRA: tuple[str, ...] = ("engfilename", "engfilepath", "engpropint")
-_SOLAR_L0_EXTRA: tuple[str, ...] = (
-    "solarl0filename",
-    "solarl0filepath",
-    "solarl0propint",
-)
+_ENG_EXTRA: tuple[str, ...] = _L0_EXTRA
+_SOLAR_L0_EXTRA: tuple[str, ...] = _L0_EXTRA
 _SOLAR_L1_EXTRA: tuple[str, ...] = (
-    "solarl1filename",
-    "solarl1filepath",
-    "solarl1propint",
+    "l1filename",
+    "l1filepath",
+    "l1propint",
+    "l1checksum",
     "airmass",
     "swversion",
 )
 _SOLAR_L2_EXTRA: tuple[str, ...] = (
-    "solarl2filename",
-    "solarl2filepath",
-    "solarl2propint",
+    "l2filename",
+    "l2filepath",
+    "l2propint",
+    "l2checksum",
     "airmass",
     "ccfjdsum",
     "ccfrvmod",
     "ccfrvsum",
     "swversion",
 )
-_SOLAR_ENG_EXTRA: tuple[str, ...] = (
-    "solarengfilename",
-    "solarengfilepath",
-    "solarengpropint",
-)
+_SOLAR_ENG_EXTRA: tuple[str, ...] = _L0_EXTRA
+
+# Which file columns (``<prefix>filename`` / ``<prefix>filepath``) hold the
+# product for each data level. Solar and engineering tables reuse the
+# night-time column names; engineering data is raw (L0).
+FILE_PREFIX: dict[str, str] = {
+    "l0": "l0",
+    "l1": "l1",
+    "l2": "l2",
+    "eng": "l0",
+    "solarl0": "l0",
+    "solarl1": "l1",
+    "solarl2": "l2",
+    "solareng": "l0",
+}
 
 
 TABLE_COLUMNS: dict[str, tuple[str, ...]] = {
@@ -104,4 +112,4 @@ TABLE_COLUMNS: dict[str, tuple[str, ...]] = {
 }
 
 
-__all__ = ["DATALEVEL_TO_TABLE", "TABLE_COLUMNS"]
+__all__ = ["DATALEVEL_TO_TABLE", "FILE_PREFIX", "TABLE_COLUMNS"]

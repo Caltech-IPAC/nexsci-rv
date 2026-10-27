@@ -32,7 +32,7 @@ from astropy.table import Table
 from .config import Conf
 from .config import conf as default_conf
 from .exceptions import AsyncJobError, AuthExpired, TapServerError
-from .tap import OutputFormat, _parse_response
+from .tap import OutputFormat, _parse_response, raise_for_tap_status
 
 logger = logging.getLogger("nexsci_rv.async_job")
 
@@ -128,7 +128,7 @@ class AsyncJob:
             raise AuthExpired(
                 f"Async job status poll rejected (HTTP {response.status_code}). Re-run .login()."
             )
-        response.raise_for_status()
+        raise_for_tap_status(response, context="Async job status poll")
         self._update_from_uws_xml(response.text)
 
     def wait(self, *, timeout: float | None = None, poll_interval: float = 5.0) -> None:
@@ -171,7 +171,7 @@ class AsyncJob:
             raise AuthExpired(
                 f"Async job result fetch rejected (HTTP {response.status_code}). Re-run .login()."
             )
-        response.raise_for_status()
+        raise_for_tap_status(response, context="Async job result fetch")
         return _parse_response(response.text, self._output_format)
 
     def abort(self) -> None:
@@ -185,7 +185,7 @@ class AsyncJob:
             raise AuthExpired(
                 f"Async job abort rejected (HTTP {response.status_code}). Re-run .login()."
             )
-        response.raise_for_status()
+        raise_for_tap_status(response, context="Async job abort")
         self.refresh()
 
     # ----- internals --------------------------------------------------------

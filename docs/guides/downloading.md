@@ -47,10 +47,12 @@ columns mean what — including the download keys — see
 {doc}`../concepts/results-columns`.
 
 ```{tip}
-If you downloaded from a custom {term}`query_adql` that selected only a filename
-column, `download` may not be able to infer which data level the files belong
-to. Pass `data_level=` explicitly in that case, e.g.
-`neid.download(tbl, data_level="l2")`.
+A table returned by a `query_*` method remembers which data level it came from,
+so `download` fetches the right files: an L2 query downloads L2 spectra even
+though NEID rows also list their L0 and L1 files. Tables from
+{term}`query_adql`, or built by hand, carry no data level. NEID night-time and
+solar tables use the same filename columns, so pass `data_level=` explicitly
+for those, e.g. `neid.download(tbl, data_level="l2")`.
 ```
 
 ## Handling partial failures

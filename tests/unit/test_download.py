@@ -13,7 +13,7 @@ from astropy.table import Table
 
 from nexsci_rv.config import Conf
 from nexsci_rv.download import _sanitize_filename, parallel_download
-from nexsci_rv.exceptions import AuthExpired, DownloadError
+from nexsci_rv.exceptions import AuthExpired, DownloadError, FileUnavailable
 
 
 def _row_to_url(row):
@@ -24,6 +24,7 @@ def _mock_stream_response(status_code=200, content=b"FITSdata"):
     resp = MagicMock(spec=requests.Response)
     resp.status_code = status_code
     resp.iter_content.return_value = [content]
+    resp.headers = {"Content-Type": "application/octet-stream"}
     resp.raise_for_status.side_effect = (
         None if status_code < 400 else requests.HTTPError(f"HTTP {status_code}")
     )
@@ -171,3 +172,19 @@ def test_filename_with_traversal_in_url_callback_raises(tmp_path):
         )
     # Should be a ValueError (from sanitization) wrapped into the DownloadError list
     assert any(isinstance(exc, ValueError) for _, exc in excinfo.value.failures)
+
+
+def test_json_error_body_is_a_failure_not_a_file(tmp_path):
+    """The archive reports missing files as HTTP 200 + JSON; never save that as FITS."""
+    resp = _mock_stream_response()
+    resp.headers = {"Content-Type": "application/json"}
+    resp.content = b'{"status": "error", "msg": "File is not available."}'
+    session = MagicMock(spec=requests.Session)
+    session.get.return_value = resp
+    session.head.return_value = MagicMock(status_code=404, headers={})
+    with pytest.raises(DownloadError) as excinfo:
+        parallel_download(_table_with_rows(1), _row_to_url, tmp_path, session, progress=False)
+    (fname, exc) = excinfo.value.failures[0]
+    assert isinstance(exc, FileUnavailable)
+    assert "File is not available." in str(exc)
+    assert not (tmp_path / fname).exists()

@@ -113,12 +113,13 @@ columns a table exposes with `neid.describe_table("neidl2")`.
 ## Output formats
 
 ```python
-votable = neid.query_datetime("l2", ("2024-11-01", "2024-11-06"), output_format="votable")
+as_csv = neid.query_datetime("l2", ("2024-11-01", "2024-11-06"), output_format="csv")
 ```
 
-Choices are `"ipac"` (default, fast), `"csv"`, and `"votable"`. They differ only
-in how the data is sent over the wire; all three parse into the same
-`astropy.table.Table`.
+Choices are `"votable"` (default), `"csv"`, and `"ipac"`. They differ only in
+how the data is sent over the wire; all three parse into an
+`astropy.table.Table`. VOTable carries each column's declared type, so it is
+the most robust choice and rarely needs changing.
 
 ## Authentication (NEID only)
 

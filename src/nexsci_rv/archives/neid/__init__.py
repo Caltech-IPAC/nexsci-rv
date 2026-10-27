@@ -6,7 +6,7 @@ from typing import ClassVar
 
 from ...base import BaseArchive
 from .endpoints import DEFAULT_SERVER, LOGIN_PATH, build_download_url
-from .tables import DATALEVEL_TO_TABLE, TABLE_COLUMNS
+from .tables import DATALEVEL_TO_TABLE, FILE_PREFIX, TABLE_COLUMNS
 
 
 class NEIDArchive(BaseArchive):
@@ -41,6 +41,14 @@ class NEIDArchive(BaseArchive):
     # All NEID tables carry 'obsdate' (verified against production TAP_SCHEMA);
     # no NEID table has a 'date_obs' column.
     _datelike_column: ClassVar[str] = "obsdate"
+    _ra_column: ClassVar[str] = "qrad"
+    _dec_column: ClassVar[str] = "qdecd"
+
+    def _filename_column(self, data_level: str) -> str:
+        return f"{FILE_PREFIX[data_level]}filename"
+
+    def _filepath_column(self, data_level: str) -> str:
+        return f"{FILE_PREFIX[data_level]}filepath"
 
     def _build_download_url(self, data_level: str, filepath: str) -> str:
         return build_download_url(data_level, filepath, server=self._server)

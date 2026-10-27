@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-10-27
+
+### Fixed
+- Queries no longer fail out of the box when the NEID TAP server cannot
+  render a result in IPAC table format: the default `output_format` for all
+  query methods and `describe_table` is now `"votable"` (previously `"ipac"`).
+  Results are still returned as an `astropy.table.Table`; pass
+  `output_format="ipac"` to get the old behavior.
+- Unsuccessful HTTP responses from the TAP service (sync queries and async
+  job submit, poll, result fetch, and abort) now raise `TapServerError`
+  carrying the server's error message, instead of a bare
+  `requests.HTTPError` with only the status code.
+- `download()` on an L1 or L2 query result fetched the **L0** files instead,
+  because NEID rows list the L0, L1, and L2 files and the first match won.
+  Results from the `query_*` methods now record their data level
+  (`Table.meta["nexsci_rv_data_level"]`) and `download()` uses it. When the
+  level cannot be determined unambiguously, `download()` raises `QueryError`
+  asking for `data_level=` instead of guessing.
+- NEID solar and engineering downloads looked for nonexistent columns
+  (`solarl2filename`, `engfilename`, ...); they now use the `l0`/`l1`/`l2`
+  file columns those tables actually carry. Those columns can also now be
+  requested with `columns=`.
+- `NEIDArchive.query_position`, `query_object`, and the `position`/`object`
+  keys of `query_criteria` searched on `ra`/`dec`, which NEID tables do not
+  have; they now search on `qrad`/`qdecd`.
+- EXPRES downloads sent the `l<n>filehand` column (a directory only), which
+  the server rejects; they now send the full `l<n>filepath`.
+- When the archive answers a file request with an error (it returns HTTP 200
+  with a JSON body for unavailable files), `download()` no longer saves that
+  JSON under the `.fits` name and reports success; the file is recorded as a
+  failure (new `FileUnavailable` exception, collected in
+  `DownloadError.failures`).
+
 ## [1.0.0] — 2026-10-27
 
 First public release.

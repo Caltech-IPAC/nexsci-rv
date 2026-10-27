@@ -18,18 +18,12 @@ DOWNLOAD_BASE_URL = f"{DEFAULT_SERVER}{_DOWNLOAD_PATH}"
 def build_download_url(data_level: str, filepath: str, *, server: str = DEFAULT_SERVER) -> str:
     """Return the GET URL for one EXPRES solar FITS file.
 
-    ``filepath`` is the value of the ``l<n>filehand`` (or ``l<n>filepath``)
-    column from a query result. The ``&express&solar`` flags mirror the
-    NEID convention for distinguishing solar/eng/express data through the
-    same ``get_file.php`` endpoint. ``server`` must be the same base the
-    queries run against so an ``EXPRESArchive(server=...)`` override applies
-    to downloads too.
-
-    Note:
-        This URL form has not been verified against the live server in v1
-        (the public TAP query path is exercised end-to-end but download
-        requires authentication for some EXPRES products). Adjust here if
-        the integration tests reveal a different URL shape.
+    ``filepath`` is the value of the ``l<n>filepath`` column from a query
+    result (``l<n>filehand`` holds only the directory and is rejected). The
+    ``&express&solar`` flags mirror the NEID convention for distinguishing
+    solar/eng/express data through the same ``get_file.php`` endpoint.
+    ``server`` must be the same base the queries run against so an
+    ``EXPRESArchive(server=...)`` override applies to downloads too.
     """
     base = server.rstrip("/") + "/" + _DOWNLOAD_PATH
     return f"{base}?filehand={filepath}&express&solar&json"

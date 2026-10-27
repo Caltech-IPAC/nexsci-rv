@@ -14,6 +14,7 @@ into ``(filename, url)``. We do the rest:
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 from collections.abc import Callable
@@ -26,7 +27,7 @@ from tqdm import tqdm
 
 from .config import Conf
 from .config import conf as default_conf
-from .exceptions import AuthExpired, DownloadError
+from .exceptions import AuthExpired, DownloadError, FileUnavailable
 
 if TYPE_CHECKING:
     from astropy.table import Table
@@ -166,6 +167,10 @@ def _fetch_one(
                         "Re-run .login()."
                     )
                 response.raise_for_status()
+                if "json" in response.headers.get("Content-Type", "").lower():
+                    raise FileUnavailable(
+                        f"Archive did not serve {safe_name}: {_json_error_message(response)}"
+                    )
                 with partial.open("wb") as handle:
                     for chunk in response.iter_content(chunk_size=1024 * 64):
                         if chunk:
@@ -192,6 +197,16 @@ def _fetch_one(
 
     # Unreachable — loop above always returns or raises.
     raise RuntimeError("unreachable")
+
+
+def _json_error_message(response: requests.Response) -> str:
+    try:
+        payload = json.loads(response.content)
+    except ValueError:
+        return "unexpected JSON response"
+    if isinstance(payload, dict) and payload.get("msg"):
+        return str(payload["msg"])
+    return "unexpected JSON response"
 
 
 def _remote_size_matches(

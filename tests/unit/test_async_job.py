@@ -420,3 +420,18 @@ def test_malformed_xml_raises_tap_server_error():
     # Now directly call _update_from_uws_xml with broken markup
     with pytest.raises(TapServerError, match="Failed to parse UWS job XML"):
         job._update_from_uws_xml("<not-closed")
+
+
+def test_result_http_error_raises_tap_server_error():
+    xml_completed = _make_uws_xml(
+        phase="completed",
+        result_href="https://tap.example/result/abc123",
+    )
+    session = MagicMock(spec=requests.Session)
+    session.get.side_effect = [
+        _mock_response(200, xml_completed),
+        _mock_response(500, "internal failure while formatting results"),
+    ]
+    job = AsyncJob("https://tap.example/job/abc123", session, conf=Conf())
+    with pytest.raises(TapServerError, match=r"HTTP 500.*internal failure"):
+        job.result()

@@ -65,7 +65,7 @@ class EXPRESArchive(BaseArchive):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         raise NotApplicable(
             "EXPRES solar rows carry sentinel qrad/qdecd values (-99.9); "
@@ -92,7 +92,7 @@ class EXPRESArchive(BaseArchive):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         raise NotApplicable(
             "EXPRES solar observations have no QOBJECT identifier; "
@@ -107,7 +107,7 @@ class EXPRESArchive(BaseArchive):
         columns: list[str] | None = None,
         where: str | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         # 'observer' lives only on expressolarl1; the L2 table omits it.
         if data_level == "solarl2":
@@ -130,7 +130,7 @@ class EXPRESArchive(BaseArchive):
         *,
         columns: list[str] | None = None,
         maxrec: int | None = None,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
     ) -> Table:
         # Block keys that route to columns EXPRES solar doesn't have.
         forbidden = {"position", "object", "qobject"}
@@ -162,8 +162,9 @@ class EXPRESArchive(BaseArchive):
         return f"l{data_level[-1]}filename"
 
     def _filepath_column(self, data_level: str) -> str:
-        # EXPRES uses l<n>filehand as the canonical download handle.
-        return f"l{data_level[-1]}filehand"
+        # l<n>filehand holds only the directory; the download endpoint needs
+        # the full path from l<n>filepath.
+        return f"l{data_level[-1]}filepath"
 
 
 __all__ = ["EXPRESArchive"]
