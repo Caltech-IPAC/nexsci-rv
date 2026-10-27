@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nexsci-rv"
-version = "0.1.0"
+version = "1.0.0"
 description = "Python client for the radial-velocity data archives hosted at NExScI."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["astronomy", "radial-velocity", "spectroscopy", "neid", "expres", "nexsci", "tap", "ivoa"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: BSD License",
     "Operating System :: POSIX :: Linux",

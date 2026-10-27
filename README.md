@@ -6,7 +6,7 @@ A Python client for radial-velocity data archives hosted at [NExScI](https://nex
 
 📖 **Documentation:** <https://caltech-ipac.github.io/nexsci-rv/>
 
-**Status:** alpha (`0.1.0`). The public API may still change before `1.0.0`.
+**Status:** stable (`1.0.0`). The public API follows [Semantic Versioning](https://semver.org/): breaking changes only in a new major version.
 
 `nexsci-rv` gives every supported archive the same interface: search
 observations by date, position, target, or program, get the results back as
