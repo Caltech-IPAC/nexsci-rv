@@ -21,8 +21,8 @@ files it fetched.
 `download` finds each file using the
 {term}`filename / filepath / filehand` columns of your table. If you narrowed
 the result with `columns=` and dropped those columns, download cannot locate the
-files. Keep `l2filename` and `l2filepath` (NEID) / `l2filehand` (EXPRES) in any
-selection you plan to download.
+files. Keep `l2filename` and `l2filepath` (or the `l0`/`l1` equivalents for
+your level) in any selection you plan to download.
 ```
 
 ## Explore small, then pull what you need
@@ -33,18 +33,20 @@ returns the rows you want, drop or raise the cap and download only those.
 
 ## When you need to log in
 
-Most NEID data becomes public after a {term}`proprietary period` (often about a
-year), during which only the observing team can reach it.
+Some archives hold data under a {term}`proprietary period` (often about a
+year), during which only the observing team can reach it; after that it becomes
+public.
 
 - **Public data** needs no login — query and download freely.
-- **Proprietary NEID data** (still inside its window) requires
-  {term}`login` with your IPAC NEID credentials: `neid.login()`. The client
-  caches your session, so you log in once.
-- **EXPRES solar data is fully public** — there is no login at all.
+- **Proprietary data** (still inside its window) requires {term}`login` with
+  your archive credentials, e.g. `neid.login()`. The client caches your
+  session, so you log in once.
+- **Fully public archives** (such as the EXPRES solar data) have no login at
+  all.
 
 If a query or download of proprietary data fails with
 {py:exc}`~nexsci_rv.exceptions.AuthExpired`, your session expired; call
-`neid.login()` again.
+`login()` again. Each archive's page says whether it has proprietary data.
 
 ## Very large pulls
 

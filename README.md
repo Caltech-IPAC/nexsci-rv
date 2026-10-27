@@ -49,7 +49,7 @@ See the [quickstart](https://caltech-ipac.github.io/nexsci-rv/quickstart.html) a
 
 ## Predecessor
 
-`nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see the [changelog](https://github.com/Caltech-IPAC/nexsci-rv/blob/main/CHANGELOG.md) for the rationale.
+`nexsci-rv` is a clean-room successor to [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible — see the [migration guide](https://caltech-ipac.github.io/nexsci-rv/guides/migrating-from-pyneid.html) for the call-by-call mapping.
 
 ## Support
 

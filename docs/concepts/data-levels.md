@@ -16,20 +16,21 @@ Frame it as one question: **how processed do you need the data to be?**
 
 ## Levels map to tables
 
-Each `data_level` string maps to a specific server table — `'l2'` → `neidl2`,
-`'solarl2'` → `expressolarl2`, and so on. You pass the **level string**, never
-the table name; the package translates for you.
+Each archive maps its `data_level` strings to its own server tables (for
+example, NEID's `'l2'` is the table `neidl2`). You pass the **level string**,
+never the table name; the package translates for you, and `archive.data_levels`
+lists the levels an archive offers.
 
 ## The solar variants
 
-The {term}`solar feed` mirrors the same hierarchy for Sun-as-a-star data:
-`solarl0` / `solarl1` / `solarl2` / `solareng` for NEID, and `solarl1` /
-`solarl2` for EXPRES. (Remember EXPRES is solar-only — see {doc}`instruments`.)
+Archives with a {term}`solar feed` mirror the same hierarchy for Sun-as-a-star
+data, with levels named `solarl0`, `solarl1`, `solarl2`, and so on. An archive
+may offer only some levels; each archive's page has its table of levels.
 
 ## Practical default
 
-Start with `'l2'` for NEID science and `'solarl2'` for EXPRES. That is where the
-radial velocities live, which is what most users came for. Drop to `'l1'` only
+Start with the level that holds the radial velocities — `'l2'`, or `'solarl2'`
+for solar data — since that is what most users came for. Drop to `'l1'` only
 when you want the spectra themselves, and to `'l0'` only when you intend to
 reduce raw frames yourself.
 

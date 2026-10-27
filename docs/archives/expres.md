@@ -41,11 +41,11 @@ Doppler shift. The headline solar L2 columns:
 | --- | --- |
 | {term}`v / e_v (EXPRES)` (`v`) | The measured radial velocity, m/s. |
 | {term}`v / e_v (EXPRES)` (`e_v`) | Formal uncertainty on `v`, m/s. |
-| {term}`dvrms (EXPRES)` | Photon-limited RV precision predicted for the exposure, m/s. |
-| {term}`extsnr (EXPRES)` | Extracted spectrum signal-to-noise; a natural quality cut. |
+| {term}`dvrms` | Photon-limited RV precision predicted for the exposure, m/s. |
+| {term}`extsnr` | Extracted spectrum signal-to-noise; a natural quality cut. |
 | {term}`obsdate` | UTC observation time stamp; what date queries filter on. |
 | `mjd` | The same time as a {term}`Julian Date (JD / MJD)` (Modified JD), for time series. |
-| {term}`filename / filepath / filehand` (`l2filename`) | The FITS file's name; {term}`download` needs it. |
+| {term}`filename / filepath / filehand` (`l2filename`, `l2filepath`) | The FITS file's name and server path; {term}`download` needs both. |
 
 If you port a NEID workflow over, swap `ccfrvmod` → `v` and `ccfnoise` → `e_v`.
 For a full, plain-language column tour see {doc}`../concepts/results-columns`.

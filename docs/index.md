@@ -47,9 +47,10 @@ results with the tools you already use.
 
 `nexsci-rv` is a clean-room successor to
 [pyNEID](https://github.com/Caltech-IPAC/pyNEID). It is **not** API-compatible:
-existing pyNEID users rewrite their imports and call sites. Where pyNEID served
-NEID only, `nexsci-rv` is built to cover multiple archives through one shared
-interface.
+existing pyNEID users rewrite their imports and call sites — see
+{doc}`guides/migrating-from-pyneid` for the call-by-call mapping. Where pyNEID
+served NEID only, `nexsci-rv` is built to cover multiple archives through one
+shared interface.
 
 ## Project status
 
@@ -106,6 +107,7 @@ quickstart
 guides/authentication
 guides/downloading
 guides/async-queries
+guides/migrating-from-pyneid
 ```
 
 ```{toctree}
