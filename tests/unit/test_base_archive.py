@@ -15,7 +15,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table
 
 from nexsci_rv import NEIDArchive
-from nexsci_rv.base import _coerce_str
+from nexsci_rv.base import DATA_LEVEL_META_KEY, _coerce_str
 from nexsci_rv.config import Conf
 from nexsci_rv.exceptions import (
     NotApplicable,
@@ -95,7 +95,8 @@ def test_download_url_defaults_to_production(neid):
 def test_query_position_builds_circle_predicate(neid):
     neid.query_position("l2", (10.0, 20.0), 0.1)
     sql = _last_adql(neid)
-    assert "CONTAINS(POINT('ICRS', ra, dec)" in sql
+    # NEID's position columns are qrad/qdecd; the server rejects ra/dec.
+    assert "CONTAINS(POINT('ICRS', qrad, qdecd)" in sql
     assert "CIRCLE('ICRS'," in sql
 
 
@@ -182,10 +183,43 @@ def test_archive_without_login_path_raises_not_applicable(monkeypatch, tmp_cooki
         arc.login(username="u", password="p")
 
 
-def test_infer_data_level_from_l2_filename_column(neid):
-    """If a table has 'l2filename', the download wrapper can infer level=l2."""
+def test_infer_data_level_refuses_night_vs_solar_ambiguity(neid):
+    """NEID night and solar tables share l2filename, and their download URLs differ."""
     table = Table({"l2filename": ["a"], "l2filepath": ["/p/a"]})
-    assert neid._infer_data_level(table) == "l2"
+    with pytest.raises(QueryError, match="several data levels"):
+        neid._infer_data_level(table)
+
+
+@pytest.mark.parametrize("level", ["l2", "solarl2", "eng"])
+def test_query_result_records_data_level(neid, level):
+    result = neid.query_datetime(level, ("2024-11-01", "2024-11-02"))
+    assert result.meta[DATA_LEVEL_META_KEY] == level
+
+
+@pytest.mark.parametrize(
+    ("level", "expected_path", "solar"),
+    [
+        ("l2", "/p/L2.fits", False),
+        ("l1", "/p/L1.fits", False),
+        ("l0", "/p/L0.fits", False),
+        ("solarl2", "/p/L2.fits", True),
+        ("eng", "/p/L0.fits", False),
+    ],
+)
+def test_download_uses_recorded_level_files(neid, level, expected_path, solar):
+    """An L2 result must download L2 files, not the L0 files its rows also reference."""
+    row = {
+        "l0filename": "L0.fits",
+        "l0filepath": "/p/L0.fits",
+        "l1filename": "L1.fits",
+        "l1filepath": "/p/L1.fits",
+        "l2filename": "L2.fits",
+        "l2filepath": "/p/L2.fits",
+    }
+    name, url = neid._row_to_url_factory(level)(row)
+    assert name == expected_path.rsplit("/", 1)[1]
+    assert f"filehand={expected_path}" in url
+    assert ("&solar" in url) is solar
 
 
 def test_infer_data_level_raises_when_ambiguous(neid):
@@ -457,6 +491,7 @@ def test_row_to_url_factory_raises_query_error_on_missing_filename(neid):
 def test_download_delegates_to_parallel_download(neid, tmp_path, monkeypatch):
     """Asserts download() calls parallel_download with the right arguments."""
     result_table = Table({"l2filename": ["obs.fits"], "l2filepath": ["/data/obs.fits"]})
+    result_table.meta[DATA_LEVEL_META_KEY] = "l2"
     mock_parallel = MagicMock(return_value=[tmp_path / "obs.fits"])
     monkeypatch.setattr("nexsci_rv.base.parallel_download", mock_parallel)
     neid._session_manager = MagicMock()

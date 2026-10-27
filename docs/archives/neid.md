@@ -97,16 +97,17 @@ tbl = neid.query_criteria({
 NEID rows carry two flavors of identity and coordinate columns, and knowing the
 difference tells you what a search actually matches:
 
-- {term}`object` / `ra` / `dec` describe **each observation** as recorded — the
-  free-text target name the observer typed and the telescope pointing. The
-  `object` field is whatever someone wrote, so it is unreliable for exact
-  matching.
-- {term}`qobject` / `qra` / `qdec` are the archive's **indexed search fields**:
-  a normalized catalog ID (typically Gaia DR2) and clean RA/Dec the archive
-  assigned. Positional and object searches run against these.
+- {term}`object` describes **each observation** as recorded — the free-text
+  target name the observer typed. It is whatever someone wrote, so it is
+  unreliable for exact matching.
+- {term}`qobject` / `qrad` / `qdecd` are the archive's **indexed search
+  fields**: a normalized catalog ID (typically Gaia DR2) and clean RA/Dec in
+  decimal degrees that the archive assigned. `qra` / `qdec` hold the same
+  position as sexagesimal strings. Positional and object searches run against
+  these.
 
-So {term}`query_position` and {term}`query_object` cone-search on `qra`/`qdec`
-(a name is resolved to coordinates first), and {term}`query_qobject` does an
+So {term}`query_position` and {term}`query_object` cone-search on
+`qrad`/`qdecd` (a name is resolved to coordinates first), and {term}`query_qobject` does an
 exact match on `qobject`. If you want every observation of one target with no
 name-resolution ambiguity, and you know its Gaia ID, `query_qobject` is the
 precise choice.

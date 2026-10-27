@@ -24,6 +24,7 @@ NexsciRVError
 │   ├── NotApplicable
 │   └── TapServerError
 ├── DownloadError
+├── FileUnavailable
 └── AsyncJobError
 ```
 

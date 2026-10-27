@@ -112,15 +112,27 @@ def _is_finite_real(x: float) -> bool:
     return math.isfinite(x)
 
 
-def format_circle_predicate(coord: CoordInput, radius: RadiusInput) -> str:
-    """Build a TAP ``CONTAINS(POINT(...),CIRCLE(...))=1`` predicate fragment."""
+def format_circle_predicate(
+    coord: CoordInput,
+    radius: RadiusInput,
+    *,
+    ra_column: str = "ra",
+    dec_column: str = "dec",
+) -> str:
+    """Build a TAP ``CONTAINS(POINT(...),CIRCLE(...))=1`` predicate fragment.
+
+    ``ra_column``/``dec_column`` name the table's position columns; archives
+    differ (NEID uses ``qrad``/``qdecd``).
+    """
+    validate_identifier(ra_column, kind="column")
+    validate_identifier(dec_column, kind="column")
     c = normalize_coord(coord)
     r = normalize_radius(radius)
     ra_deg = c.ra.to(u.deg).value
     dec_deg = c.dec.to(u.deg).value
     r_deg = r.to(u.deg).value
     return (
-        f"CONTAINS(POINT('ICRS', ra, dec), "
+        f"CONTAINS(POINT('ICRS', {ra_column}, {dec_column}), "
         f"CIRCLE('ICRS', {ra_deg:.10f}, {dec_deg:.10f}, {r_deg:.10f}))=1"
     )
 

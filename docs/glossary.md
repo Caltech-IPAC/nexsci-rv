@@ -143,12 +143,13 @@ qobject
   (the package maps it to the constant `'Sun'`).
 
 query coordinates (qra / qdec / qrad / qdecd)
-  The archive's "query" coordinates for a row (RA/Dec of the target): `qra` /
-  `qdec` for NEID, `qrad` / `qdecd` for EXPRES. For NEID these are real sky
+  The archive's "query" coordinates for a row (RA/Dec of the target): `qrad` /
+  `qdecd` in decimal degrees, and `qra` / `qdec` as sexagesimal strings.
+  Position-based searches use `qrad` / `qdecd`. For NEID these are real sky
   coordinates. For EXPRES solar they are {term}`sentinel value`s of `-99.9`
-  because the Sun has no fixed celestial coordinate here. Position-based searches
-  use these columns, which is exactly why EXPRES `query_position`,
-  `query_object`, and `query_qobject` raise {term}`NotApplicable`.
+  because the Sun has no fixed celestial coordinate here, which is exactly why
+  EXPRES `query_position`, `query_object`, and `query_qobject` raise
+  {term}`NotApplicable`.
 
 sentinel value
   A placeholder number that means "no real value here", not an actual
@@ -254,9 +255,9 @@ VOTable
   implementation detail.
 
 output format
-  The wire format the server uses to send results back. `'ipac'` (fixed-width
-  IPAC table) is the default and fastest; `'csv'` and `'votable'` are
-  alternatives, and all three are parsed into the same
+  The wire format the server uses to send results back. `'votable'` is the
+  default; `'csv'` and `'ipac'` (fixed-width IPAC table) are alternatives, and
+  all three are parsed into the same
   {py:class}`astropy.table.Table`. You rarely change it: it affects only how the
   data is transmitted, not what data you get.
 

@@ -64,7 +64,7 @@ class TapClient:
         self,
         adql: str,
         *,
-        output_format: OutputFormat = "ipac",
+        output_format: OutputFormat = "votable",
         maxrec: int | None = None,
     ) -> Table:
         """Execute a sync ADQL query against the TAP service.
@@ -72,10 +72,10 @@ class TapClient:
         Returns an :class:`astropy.table.Table`.
 
         Raises:
-            TapServerError: if the server returned ``QUERY_STATUS=ERROR``
-                (HTTP 200 with an error embedded in the response body).
+            TapServerError: if the server reported an error, either as
+                ``QUERY_STATUS=ERROR`` inside an HTTP 200 response or as an
+                unsuccessful HTTP status. The server's message is included.
             AuthExpired: if the server returned HTTP 401/403.
-            requests.HTTPError: for other unsuccessful HTTP responses.
         """
         if output_format not in VALID_FORMATS:
             raise ValueError(
@@ -106,7 +106,7 @@ class TapClient:
             raise AuthExpired(
                 f"TAP server rejected the session (HTTP {response.status_code}). Re-run .login()."
             )
-        response.raise_for_status()
+        raise_for_tap_status(response, context="TAP query")
 
         body = response.text
         return _parse_response(body, output_format)
@@ -150,6 +150,28 @@ def _parse_response(body: str, output_format: OutputFormat) -> Table:
     return astropy_ascii.read(body, format="csv")
 
 
+_MAX_ERROR_BODY_CHARS = 500
+
+
+def raise_for_tap_status(response: requests.Response, *, context: str) -> None:
+    """Raise :class:`TapServerError` for an unsuccessful HTTP response.
+
+    The TAP server explains failures in the response body (plain text, or a
+    VOTable with ``QUERY_STATUS=ERROR``); the message is carried into the
+    exception so callers see why the request failed, not only the status code.
+    """
+    if response.status_code < 400:
+        return
+    body = response.text or ""
+    if _is_votable_error(body):
+        detail = _extract_votable_error(body)
+    else:
+        detail = body.strip()[:_MAX_ERROR_BODY_CHARS] or (
+            getattr(response, "reason", None) or "no message"
+        )
+    raise TapServerError(f"{context} failed (HTTP {response.status_code}): {detail}")
+
+
 def _is_votable_error(body: str) -> bool:
     return bool(_VOTABLE_ERROR_RE.search(body))
 
@@ -161,4 +183,4 @@ def _extract_votable_error(body: str) -> str:
     return match.group(1).strip()
 
 
-__all__ = ["VALID_FORMATS", "OutputFormat", "TapClient"]
+__all__ = ["VALID_FORMATS", "OutputFormat", "TapClient", "raise_for_tap_status"]

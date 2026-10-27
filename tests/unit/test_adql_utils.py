@@ -192,3 +192,13 @@ def test_build_select_no_NaN_in_radius():
     # paranoia: make sure no NaN sneaks into the format string for predicates
     with pytest.raises(QueryError):
         normalize_radius(math.nan)
+
+
+def test_circle_predicate_uses_given_position_columns():
+    pred = format_circle_predicate((10.0, 20.0), 0.1, ra_column="qrad", dec_column="qdecd")
+    assert pred.startswith("CONTAINS(POINT('ICRS', qrad, qdecd), CIRCLE('ICRS',")
+
+
+def test_circle_predicate_rejects_unsafe_column_names():
+    with pytest.raises(QueryError):
+        format_circle_predicate((10.0, 20.0), 0.1, ra_column="ra); DROP TABLE x;--")

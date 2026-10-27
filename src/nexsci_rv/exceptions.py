@@ -85,6 +85,15 @@ class DownloadError(NexsciRVError):
         self.failures = failures
 
 
+class FileUnavailable(NexsciRVError):
+    """The archive answered a file request with an error instead of the file.
+
+    The NEID download endpoint reports problems (file not available, invalid
+    file handle) as a JSON body with HTTP 200, so this is detected from the
+    response content rather than the status code.
+    """
+
+
 # ----- async job -------------------------------------------------------------
 
 
@@ -98,6 +107,7 @@ __all__ = [
     "AuthExpired",
     "ConfigError",
     "DownloadError",
+    "FileUnavailable",
     "LoginFailed",
     "NexsciRVError",
     "NotApplicable",

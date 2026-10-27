@@ -199,10 +199,10 @@ def test_filename_column_for_solarl2(expres):
     assert expres._filename_column("solarl2") == "l2filename"
 
 
-def test_filepath_column_uses_filehand(expres):
-    """EXPRES uses 'l<n>filehand', not 'l<n>filepath', as the download handle."""
-    assert expres._filepath_column("solarl1") == "l1filehand"
-    assert expres._filepath_column("solarl2") == "l2filehand"
+def test_filepath_column_uses_full_path(expres):
+    """'l<n>filehand' holds only a directory; the server rejects it as a file handle."""
+    assert expres._filepath_column("solarl1") == "l1filepath"
+    assert expres._filepath_column("solarl2") == "l2filepath"
 
 
 def test_infer_data_level_from_l2_filename(expres):
