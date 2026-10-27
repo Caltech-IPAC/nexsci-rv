@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Documentation: a "Migrating from pyNEID" guide mapping every pyNEID call to
+  its `nexsci-rv` equivalent.
+
+### Changed
+- Documentation: the concepts pages and glossary are now archive-neutral, with
+  instrument-specific details on each archive's page and per-archive glossary
+  sections.
+
 ## [1.0.1] — 2026-10-27
 
 ### Fixed

@@ -1,6 +1,6 @@
 # Choosing a query
 
-You have picked an instrument and a {term}`data level` (see {doc}`data-levels`).
+You have picked an archive and a {term}`data level` (see {doc}`data-levels`).
 Now pick a query method by **what you already know** about the data you want.
 
 | You know... | Use | What it does |
@@ -17,7 +17,7 @@ Now pick a query method by **what you already know** about the data you want.
 ## Start with a time window
 
 {term}`query_datetime` is the safest first query: it always works and is the
-only sky-independent one. When in doubt — or when working with EXPRES solar — it
+only sky-independent one. When in doubt — or when working with solar data — it
 is the right entry point.
 
 ## Name versus catalog ID
@@ -41,19 +41,17 @@ plus `object_radius`, `qobject`, `program`, `pi_name`, and `where` for a raw
 {term}`ADQL` add-on). One combined query beats running several and merging the
 results.
 
-## The EXPRES caveat
+## When a method does not apply
 
-EXPRES solar rows have no celestial target — their
+Not every method makes sense for every archive or level. Solar observations have
+no celestial target — their
 {term}`query coordinates (qra / qdec / qrad / qdecd)` are
-{term}`sentinel value`s of `-99.9`. So
-{py:meth}`query_position <nexsci_rv.EXPRESArchive.query_position>`,
-{term}`query_object`, and {term}`query_qobject` all raise
-{py:exc}`~nexsci_rv.exceptions.NotApplicable`. {term}`query_pi` works on
-`solarl1` (the `observer` column) but raises
-{py:exc}`~nexsci_rv.exceptions.NotApplicable` on `solarl2`. For EXPRES, reach for
-{term}`query_datetime` first, optionally narrowed with a `where=` cut (e.g.
-`extsnr > 200`); {term}`query_program` is mostly a sanity check, since all solar
-data shares the single program `'EXPRESSOLAR'`.
+{term}`sentinel value`s — so position, object, and qobject searches on solar
+data raise {py:exc}`~nexsci_rv.exceptions.NotApplicable` rather than return
+meaningless rows. Likewise {term}`query_pi` raises it on tables with no PI
+column. Each archive's page lists exactly which methods apply. For solar data,
+reach for {term}`query_datetime`, optionally narrowed with a `where=` cut (e.g.
+`extsnr > 200`).
 
 ## Sync versus async
 

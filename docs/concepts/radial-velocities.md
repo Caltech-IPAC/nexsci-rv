@@ -13,8 +13,8 @@ shift converted to a speed along our line of sight, in m/s.
 
 This matters because a planet makes its host star wobble in a small orbit.
 Measuring the star's RV over time reveals that periodic motion — and so reveals
-the planet. NEID and EXPRES are built to measure RV to better than a meter per
-second.
+the planet. The spectrographs whose archives this package serves are built to
+measure RV to better than a meter per second.
 
 ## How the pipeline measures the shift
 
@@ -29,14 +29,21 @@ finished CCF results.
 
 ## Which columns are the answer
 
-- **The RV itself:** {term}`ccfrvmod` (NEID) / {term}`v / e_v (EXPRES)` (`v` for
-  EXPRES). This is the number you plot against time.
-- **Its error bar:** {term}`ccfnoise` (NEID) / `e_v` (EXPRES).
-- **The precise time:** {term}`ccfjdsum`, often the right x-axis for an RV time
-  series.
-- **An alternate RV (NEID):** `ccfrvsum`, a co-added-CCF cross-check on
-  `ccfrvmod`.
-- **EXPRES quality:** {term}`dvrms (EXPRES)` (the photon-noise precision floor)
-  and {term}`extsnr (EXPRES)` (extracted signal-to-noise).
+Every archive's L2 table answers the same handful of questions, though the
+column names differ between archives:
 
-For the full column tour, see {doc}`results-columns`.
+- **The RV itself** — the number you plot against time.
+- **Its error bar** — needed to weight points in a fit.
+- **The precise time** — a Julian Date, often the right x-axis for an RV time
+  series.
+- **Quality indicators** — the photon-noise precision floor ({term}`dvrms`) and
+  the extracted signal-to-noise ({term}`extsnr`).
+
+| Question | NEID | EXPRES |
+| --- | --- | --- |
+| Radial velocity | {term}`ccfrvmod` | `v` |
+| RV uncertainty | {term}`ccfnoise` | `e_v` |
+| Time of the RV | {term}`ccfjdsum` | {term}`ccfjdsum` |
+
+Each archive's page lists its full set of RV columns. For the column tour, see
+{doc}`results-columns`.

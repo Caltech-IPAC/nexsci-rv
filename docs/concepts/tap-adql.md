@@ -30,9 +30,9 @@ When you do write ADQL yourself, two server quirks bite:
 
 - **Dates** must use Oracle `to_date('YYYY-MM-DD HH24:MI:SS', ...)`; a bare
   string comparison fails. (The high-level methods handle this for you.)
-- **Table names are spelling- and case-sensitive** — `expressolarl1` has a
-  single `s` between `expres` and `solar`. Double-s spellings return a
-  "table or view does not exist" error.
+- **Table names are spelling- and case-sensitive**; a misspelled table returns
+  a "table or view does not exist" error. Each archive's page lists its table
+  names and any spelling traps (for example, EXPRES's `expressolarl1`).
 ```
 
 ## Sync versus async

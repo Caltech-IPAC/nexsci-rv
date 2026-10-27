@@ -29,8 +29,8 @@ exist).
 you hand it. If you narrowed a query with `columns=` and dropped those, download
 has nothing to work from.
 
-- **NEID** uses `*filename` plus `*filepath` (e.g. `l2filename`, `l2filepath`).
-- **EXPRES** uses `*filename` plus `*filehand` (e.g. `l2filename`, `l2filehand`).
+Every archive uses a `*filename` plus `*filepath` pair named after the data
+level (e.g. `l2filename`, `l2filepath`).
 
 So if you select columns explicitly, keep the relevant pair:
 
