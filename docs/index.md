@@ -53,8 +53,9 @@ interface.
 
 ## Project status
 
-Alpha (`0.1.0`). The code is production-quality, but the public API may still
-shift based on user feedback before `1.0.0`. Issues and design feedback are
+Stable (`1.0.0`). The public API follows
+[Semantic Versioning](https://semver.org/): breaking changes come only in a new
+major version. Issues and design feedback are
 welcome at
 [github.com/Caltech-IPAC/nexsci-rv/issues](https://github.com/Caltech-IPAC/nexsci-rv/issues).
 
