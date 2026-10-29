@@ -2,7 +2,11 @@
 
 A Python client for radial-velocity data archives hosted at [NExScI](https://nexsci.caltech.edu/).
 
+[![CI](https://github.com/Caltech-IPAC/nexsci-rv/actions/workflows/ci.yml/badge.svg)](https://github.com/Caltech-IPAC/nexsci-rv/actions/workflows/ci.yml)
 [![Docs](https://github.com/Caltech-IPAC/nexsci-rv/actions/workflows/docs.yml/badge.svg)](https://caltech-ipac.github.io/nexsci-rv/)
+[![Coverage](https://codecov.io/gh/Caltech-IPAC/nexsci-rv/branch/main/graph/badge.svg)](https://codecov.io/gh/Caltech-IPAC/nexsci-rv)
+[![PyPI version](https://img.shields.io/pypi/v/nexsci-rv.svg)](https://pypi.org/project/nexsci-rv/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/nexsci-rv.svg)](https://pypistats.org/packages/nexsci-rv)
 
 📖 **Documentation:** <https://caltech-ipac.github.io/nexsci-rv/>
 
