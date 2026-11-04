@@ -56,15 +56,23 @@ on a prompt nobody can answer. Supply credentials via the env vars in that case.
 
 ## The session cookie
 
-A successful login writes a single session cookie to:
+A successful login writes a single session cookie to `neid/cookie` inside your
+platform's user-config directory:
 
-```text
-~/.config/nexsci-rv/neid/cookie
+| Platform | Cookie file |
+|---|---|
+| Linux | `~/.config/nexsci-rv/neid/cookie` (or `$XDG_CONFIG_HOME/nexsci-rv/neid/cookie`) |
+| macOS | `~/Library/Application Support/nexsci-rv/neid/cookie` |
+| Windows | `%LOCALAPPDATA%\nexsci-rv\nexsci-rv\neid\cookie` |
+
+To see where it is on your machine:
+
+```python
+from nexsci_rv import conf
+print(conf.cookie_root / "neid" / "cookie")
 ```
 
-(The root is `~/.config/nexsci-rv/` by default — strictly, your platform's
-user-config directory — with a per-archive subdirectory. You can relocate it
-with the `NEXSCI_RV_COOKIE_ROOT` environment variable.)
+You can relocate the root with the `NEXSCI_RV_COOKIE_ROOT` environment variable.
 
 The cookie is written with `0o600` permissions (readable only by you) and is
 **reused across runs**: log in once, and later Python sessions pick the cookie
@@ -78,7 +86,7 @@ To "log out", delete the cookie. The tidy way is:
 neid.logout()   # clears the in-memory session and deletes the cookie file
 ```
 
-which is equivalent to removing `~/.config/nexsci-rv/neid/cookie` by hand.
+which is equivalent to deleting the cookie file shown above by hand.
 
 ### When the session expires
 
@@ -122,7 +130,7 @@ around this library:
   `NEXSCI_RV_NEID_USER` / `NEXSCI_RV_NEID_PASSWORD` from your shell or a secrets
   manager rather than literals in the code.
 - **Don't commit the cookie.** The cookie file is a live credential. It lives
-  under `~/.config/`, away from your project, precisely so it does not land in a
+  in your user-config directory, away from your project, precisely so it does not land in a
   repo — keep it that way, and add it to `.gitignore` if you ever relocate it
   with `NEXSCI_RV_COOKIE_ROOT`.
 - **Clear notebook output** before sharing if you ever echo environment

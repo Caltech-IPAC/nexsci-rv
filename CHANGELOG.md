@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instrument-specific details on each archive's page and per-archive glossary
   sections.
 
+### Fixed
+- Documentation: the authentication and pyNEID migration guides now give the
+  session cookie's location per platform (macOS uses
+  `~/Library/Application Support/nexsci-rv/`, not `~/.config/nexsci-rv/`) and
+  show how to print it from `nexsci_rv.conf.cookie_root`.
+
 ## [1.0.1] — 2026-10-27
 
 ### Fixed
