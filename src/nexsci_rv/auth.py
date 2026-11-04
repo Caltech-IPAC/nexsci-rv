@@ -35,7 +35,8 @@ class SessionManager:
     Args:
         archive_name: Short identifier used to namespace the on-disk cookie
             and the env-var names (e.g. ``"neid"`` →
-            ``~/.config/nexsci-rv/neid/cookie`` and
+            ``<cookie_root>/neid/cookie``, where ``cookie_root`` defaults to
+            the platform's user-config directory, and
             ``NEXSCI_RV_NEID_USER`` / ``NEXSCI_RV_NEID_PASSWORD``).
         cookie_path: Override for the default cookie file location.
         conf: Process configuration to use. Defaults to the module-level

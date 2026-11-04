@@ -22,8 +22,8 @@ neid = NEIDArchive()
 neid.login(username="me", password="...")
 ```
 
-- There is no `cookiepath`. The session cookie is stored for you (under
-  `~/.config/nexsci-rv/neid/`) and reused by every later query and download, in
+- There is no `cookiepath`. The session cookie is stored for you (in your
+  user-config directory; see [where the cookie lives](authentication.md#the-session-cookie)) and reused by every later query and download, in
   this and future sessions.
 - Credentials can come from the environment instead of code:
   `NEXSCI_RV_NEID_USER` and `NEXSCI_RV_NEID_PASSWORD`. With neither arguments
