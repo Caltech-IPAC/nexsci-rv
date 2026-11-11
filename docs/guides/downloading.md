@@ -83,8 +83,10 @@ session expired. Call `neid.login()` again and re-run the download (see
 
 ## Useful options
 
-- **`resume=True`** (the default) skips any destination file that already exists
-  at the same size as the remote file. Re-running a download after a partial
+- **`resume=True`** (the default) skips any destination file that already
+  exists. Files are written to a `.partial` name and renamed only once complete,
+  so an existing file is a finished download; it is fetched again only if the
+  server reports a different size. Re-running a download after a partial
   failure therefore fetches only what's missing — cheap and idempotent.
 - **`workers=`** sets how many files download in parallel (default `4`).
   Astronomy archives throttle aggressively, so a modest number is both polite

@@ -58,8 +58,8 @@ def parallel_download(
         outdir: Destination directory; created if missing.
         session: HTTP session (typically supplied by ``SessionManager``).
         workers: Concurrency. Defaults to :attr:`Conf.download_workers`.
-        resume: If True and a destination file already exists, skip when sizes
-            match the remote ``Content-Length``.
+        resume: If True, skip any destination file that already exists, unless
+            the server reports a ``Content-Length`` that differs from it.
         progress: Show a tqdm bar to stderr.
         conf: Process configuration.
 
@@ -151,7 +151,11 @@ def _fetch_one(
     safe_name = _sanitize_filename(filename)
     dest = outdir / safe_name
 
-    if resume and dest.exists() and _remote_size_matches(session, url, dest, timeout=timeout):
+    # Files only reach ``dest`` via the atomic ``.partial`` rename below, so an
+    # existing ``dest`` is a complete earlier download. Re-fetch it only when
+    # the server advertises a size that disagrees (NEID's get_file.php sends
+    # no Content-Length at all, so "no size info" must mean "keep it").
+    if resume and dest.exists() and not _remote_size_differs(session, url, dest, timeout=timeout):
         logger.info("skipping (already present): %s", safe_name)
         return dest
 
@@ -209,9 +213,14 @@ def _json_error_message(response: requests.Response) -> str:
     return "unexpected JSON response"
 
 
-def _remote_size_matches(
+def _remote_size_differs(
     session: requests.Session, url: str, dest: Path, *, timeout: float
 ) -> bool:
+    """Return True only if the server reports a size that differs from ``dest``.
+
+    Missing or unusable size information (HEAD error, no ``Content-Length``)
+    returns False: we have no evidence the local copy is wrong.
+    """
     try:
         head = session.head(url, timeout=timeout, allow_redirects=True)
     except requests.RequestException:
@@ -225,7 +234,7 @@ def _remote_size_matches(
         remote_size = int(length)
     except ValueError:
         return False
-    return dest.stat().st_size == remote_size
+    return dest.stat().st_size != remote_size
 
 
 def _sanitize_filename(name: str) -> str:
