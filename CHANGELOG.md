@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sections.
 
 ### Fixed
+- `download(resume=True)` now skips files that are already on disk. Before
+  this fix it downloaded every file again, because NEID's file server sends no
+  `Content-Length` and the resume check required one.
 - Documentation: the authentication and pyNEID migration guides now give the
   session cookie's location per platform (macOS uses
   `~/Library/Application Support/nexsci-rv/`, not `~/.config/nexsci-rv/`) and

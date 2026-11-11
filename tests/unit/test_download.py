@@ -129,6 +129,45 @@ def test_resume_skips_if_remote_size_matches(tmp_path):
     session.get.assert_not_called()
 
 
+def test_resume_skips_when_server_omits_content_length(tmp_path):
+    # NEID prod's get_file.php sends no Content-Length on HEAD (and streams GET
+    # chunked). Files only land at their final name after a complete stream
+    # (atomic .partial rename), so an existing file must still be skipped.
+    (tmp_path / "file_0.fits").write_bytes(b"FITSdata")
+    session = MagicMock(spec=requests.Session)
+    session.head.return_value = MagicMock(
+        status_code=200, headers={"Content-Type": "application/octet-stream"}
+    )
+    session.get.return_value = _mock_stream_response()
+    rows = _table_with_rows(1)
+    out = parallel_download(rows, _row_to_url, tmp_path, session, workers=1, progress=False)
+    assert out == [tmp_path / "file_0.fits"]
+    session.get.assert_not_called()
+
+
+def test_resume_refetches_when_remote_size_differs(tmp_path):
+    (tmp_path / "file_0.fits").write_bytes(b"stale")
+    session = MagicMock(spec=requests.Session)
+    session.head.return_value = MagicMock(
+        status_code=200, headers={"Content-Length": str(len(b"FITSdata"))}
+    )
+    session.get.return_value = _mock_stream_response()
+    rows = _table_with_rows(1)
+    out = parallel_download(rows, _row_to_url, tmp_path, session, workers=1, progress=False)
+    session.get.assert_called_once()
+    assert out[0].read_bytes() == b"FITSdata"
+
+
+def test_resume_false_refetches_existing_file(tmp_path):
+    (tmp_path / "file_0.fits").write_bytes(b"FITSdata")
+    session = MagicMock(spec=requests.Session)
+    session.get.return_value = _mock_stream_response()
+    rows = _table_with_rows(1)
+    parallel_download(rows, _row_to_url, tmp_path, session, workers=1, resume=False, progress=False)
+    session.head.assert_not_called()
+    session.get.assert_called_once()
+
+
 def test_retries_then_succeeds(tmp_path):
     session = MagicMock(spec=requests.Session)
     session.head.return_value = MagicMock(status_code=404, headers={})
