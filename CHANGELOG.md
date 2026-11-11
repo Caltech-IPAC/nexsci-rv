@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] — 2026-11-11
+
 ### Added
 - Documentation: a "Migrating from pyNEID" guide mapping every pyNEID call to
   its `nexsci-rv` equivalent.
